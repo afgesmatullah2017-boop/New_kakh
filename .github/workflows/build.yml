@@ -18,23 +18,33 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Workspace and Locate Sketchware Files
+      - name: Setup Workspace and Copy Sketchware Files
         run: |
-          echo "Searching for Sketchware project folders..."
+          echo "Setting up workspace directories..."
           mkdir -p app/src/main/java app/src/main/res app/libs
           
-          # پیدا کردن خودکار پوشه‌ها در هر عمقی از مخزن
-          LOGIC_DIR=$(find . -type d -name "logic" | head -n 1)
-          VIEW_DIR=$(find . -type d -name "view" | head -n 1)
-          RES_DIR=$(find . -type d -name "resource" | head -n 1)
-          LIB_DIR=$(find . -type d -name "library" | head -n 1)
-          
-          if [ -n "$LOGIC_DIR" ]; then cp -r "$LOGIC_DIR"/* app/src/main/java/ || true; fi
-          if [ -n "$VIEW_DIR" ]; then cp -r "$VIEW_DIR"/* app/src/main/res/ || true; fi
-          if [ -n "$RES_DIR" ]; then cp -r "$RES_DIR"/* app/src/main/res/ || true; fi
-          if [ -n "$LIB_DIR" ]; then cp -r "$LIB_DIR"/* app/libs/ || true; fi
+          # کپی مستقیم و دقیق از مسیر واقعی پروژه شما در مخزن
+          if [ -d "SW-Project/data/logic" ]; then
+            cp -r SW-Project/data/logic/* app/src/main/java/ || true
+            echo "Logic files copied successfully."
+          fi
 
-          # ایجاد فایل تنظیمات ریشه
+          if [ -d "SW-Project/data/view" ]; then
+            cp -r SW-Project/data/view/* app/src/main/res/ || true
+            echo "View files copied successfully."
+          fi
+
+          if [ -d "SW-Project/data/resource" ]; then
+            cp -r SW-Project/data/resource/* app/src/main/res/ || true
+            echo "Resource files copied successfully."
+          fi
+
+          if [ -d "SW-Project/data/library" ]; then
+            cp -r SW-Project/data/library/* app/libs/ || true
+            echo "Library files copied successfully."
+          fi
+
+          # ایجاد فایل build.gradle ریشه
           cat << 'EOF' > build.gradle
           allprojects {
               repositories {
@@ -49,7 +59,7 @@ jobs:
           include ':app'
           EOF
 
-          # ایجاد تنظیمات برنامه همراه با فعال‌سازی مبهم‌سازی (Minify & ProGuard)
+          # ایجاد تنظیمات برنامه همراه با فعال‌سازی کامل مبهم‌سازی (Minify & ProGuard)
           cat << 'EOF' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -90,7 +100,5 @@ jobs:
           path: |
             app/build/outputs/bundle/release/*.aab
             app/build/outputs/apk/release/*.apk
-            **/build/outputs/**/*.aab
-            **/build/outputs/**/*.apk
           if-no-files-found: warn
           retention-days: 14
