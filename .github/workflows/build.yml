@@ -18,37 +18,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Workspace and Organize Sketchware Files
+      - name: Setup Workspace and Locate Sketchware Files
         run: |
-          echo "Setting up workspace..."
+          echo "Searching for Sketchware project folders..."
           mkdir -p app/src/main/java app/src/main/res app/libs
           
-          # پیدا کردن و انتقال پوشه‌ها از هر مسیری که در مخزن باشند
-          if [ -d "SW-Project/data/logic" ]; then
-            cp -r SW-Project/data/logic/* app/src/main/java/ || true
-          elif [ -d "logic" ]; then
-            cp -r logic/* app/src/main/java/ || true
-          fi
+          # پیدا کردن خودکار پوشه‌ها در هر عمقی از مخزن
+          LOGIC_DIR=$(find . -type d -name "logic" | head -n 1)
+          VIEW_DIR=$(find . -type d -name "view" | head -n 1)
+          RES_DIR=$(find . -type d -name "resource" | head -n 1)
+          LIB_DIR=$(find . -type d -name "library" | head -n 1)
+          
+          if [ -n "$LOGIC_DIR" ]; then cp -r "$LOGIC_DIR"/* app/src/main/java/ || true; fi
+          if [ -n "$VIEW_DIR" ]; then cp -r "$VIEW_DIR"/* app/src/main/res/ || true; fi
+          if [ -n "$RES_DIR" ]; then cp -r "$RES_DIR"/* app/src/main/res/ || true; fi
+          if [ -n "$LIB_DIR" ]; then cp -r "$LIB_DIR"/* app/libs/ || true; fi
 
-          if [ -d "SW-Project/data/view" ]; then
-            cp -r SW-Project/data/view/* app/src/main/res/ || true
-          elif [ -d "view" ]; then
-            cp -r view/* app/src/main/res/ || true
-          fi
-
-          if [ -d "SW-Project/data/resource" ]; then
-            cp -r SW-Project/data/resource/* app/src/main/res/ || true
-          elif [ -d "resource" ]; then
-            cp -r resource/* app/src/main/res/ || true
-          fi
-
-          if [ -d "SW-Project/data/library" ]; then
-            cp -r SW-Project/data/library/* app/libs/ || true
-          elif [ -d "library" ]; then
-            cp -r library/* app/libs/ || true
-          fi
-
-          # ایجاد فایل build.gradle ریشه
+          # ایجاد فایل تنظیمات ریشه
           cat << 'EOF' > build.gradle
           allprojects {
               repositories {
@@ -58,12 +44,12 @@ jobs:
           }
           EOF
 
-          # ایجاد تنظیمات گرادل
+          # ایجاد settings.gradle
           cat << 'EOF' > settings.gradle
           include ':app'
           EOF
 
-          # ایجاد تنظیمات اپلیکیشن همراه با فعالسازی کامل مبهم‌سازی (Minify & ProGuard)
+          # ایجاد تنظیمات برنامه همراه با فعال‌سازی مبهم‌سازی (Minify & ProGuard)
           cat << 'EOF' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -87,10 +73,10 @@ jobs:
           }
           EOF
 
-          # ایجاد فایل قوانین پروگارد برای مبهم‌سازی
+          # ایجاد فایل قوانین پروگارد
           touch app/proguard-rules.pro
 
-      - name: Build with Gradle Wrapper
+      - name: Build with Gradle
         run: |
           gradle wrapper --gradle-version 8.0
           chmod +x gradlew
