@@ -1,0 +1,12 @@
+@activity
+{"fileName":"main","fileType":0,"keyboardSetting":2,"options":0,"orientation":0,"theme":-1}
+{"fileName":"home","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+{"fileName":"reader","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+{"fileName":"search","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+{"fileName":"settings","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+{"fileName":"bookmark","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+{"fileName":"about","fileType":0,"keyboardSetting":2,"options":0,"orientation":2,"theme":-1}
+@customview
+{"fileName":"item_story_card","fileType":1,"keyboardSetting":0,"options":0,"orientation":2,"theme":-1}
+{"fileName":"custom_reading_settings","fileType":1,"keyboardSetting":0,"options":0,"orientation":2,"theme":-1}
+{"fileName":"dialog_exit","fileType":1,"keyboardSetting":0,"options":0,"orientation":2,"theme":-1}

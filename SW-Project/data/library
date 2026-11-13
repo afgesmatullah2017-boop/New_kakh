@@ -1,0 +1,8 @@
+@firebaseDB
+{"adUnits":[],"appId":"","configurations":{},"data":"","libType":0,"reserved1":"","reserved2":"","reserved3":"","testDevices":[],"useYn":"N"}
+@compat
+{"adUnits":[],"appId":"","configurations":{},"data":"","libType":1,"reserved1":"","reserved2":"","reserved3":"","testDevices":[],"useYn":"Y"}
+@admob
+{"adUnits":[{"id":"ca-app-pub-1018917537614378/6124492080","name":"Banner"},{"id":"ca-app-pub-1018917537614378/3631310249","name":"Interstitial"},{"id":"ca-app-pub-1018917537614378/7844767864","name":"Rewarded"}],"appId":"ca-app-pub-1018917537614378~8250842416","configurations":{},"data":"","libType":2,"reserved1":"Banner : ca-app-pub-1018917537614378/6124492080","reserved2":"Interstitial : ca-app-pub-1018917537614378/3631310249","reserved3":"Rewarded : ca-app-pub-1018917537614378/7844767864","testDevices":[],"useYn":"Y"}
+@googleMap
+{"adUnits":[],"appId":"","configurations":{},"data":"","libType":3,"reserved1":"","reserved2":"","reserved3":"","testDevices":[],"useYn":"N"}
