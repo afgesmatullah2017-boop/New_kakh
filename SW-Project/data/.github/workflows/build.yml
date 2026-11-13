@@ -1,0 +1,111 @@
+name: Build Android AAB and APK with Obfuscation
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Workspace and Organize Sketchware Files
+        run: |
+          echo "Setting up workspace..."
+          mkdir -p app/src/main/java app/src/main/res app/libs
+          
+          # پیدا کردن و انتقال پوشه‌ها از هر مسیری که در مخزن باشند
+          if [ -d "SW-Project/data/logic" ]; then
+            cp -r SW-Project/data/logic/* app/src/main/java/ || true
+          elif [ -d "logic" ]; then
+            cp -r logic/* app/src/main/java/ || true
+          fi
+
+          if [ -d "SW-Project/data/view" ]; then
+            cp -r SW-Project/data/view/* app/src/main/res/ || true
+          elif [ -d "view" ]; then
+            cp -r view/* app/src/main/res/ || true
+          fi
+
+          if [ -d "SW-Project/data/resource" ]; then
+            cp -r SW-Project/data/resource/* app/src/main/res/ || true
+          elif [ -d "resource" ]; then
+            cp -r resource/* app/src/main/res/ || true
+          fi
+
+          if [ -d "SW-Project/data/library" ]; then
+            cp -r SW-Project/data/library/* app/libs/ || true
+          elif [ -d "library" ]; then
+            cp -r library/* app/libs/ || true
+          fi
+
+          # ایجاد فایل build.gradle ریشه
+          cat << 'EOF' > build.gradle
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          EOF
+
+          # ایجاد تنظیمات گرادل
+          cat << 'EOF' > settings.gradle
+          include ':app'
+          EOF
+
+          # ایجاد تنظیمات اپلیکیشن همراه با فعالسازی کامل مبهم‌سازی (Minify & ProGuard)
+          cat << 'EOF' > app/build.gradle
+          plugins {
+              id 'com.android.application'
+          }
+          android {
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.zalalapp.kakhasrar"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 21
+                  versionName "3.0"
+              }
+              buildTypes {
+                  release {
+                      minifyEnabled true
+                      shrinkResources true
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+          }
+          EOF
+
+          # ایجاد فایل قوانین پروگارد برای مبهم‌سازی
+          touch app/proguard-rules.pro
+
+      - name: Build with Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.0
+          chmod +x gradlew
+          ./gradlew bundleRelease assembleRelease --stacktrace
+
+      - name: Upload Artifacts (AAB & APK)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Release-AAB-APK-Obfuscated
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/apk/release/*.apk
+            **/build/outputs/**/*.aab
+            **/build/outputs/**/*.apk
+          if-no-files-found: warn
+          retention-days: 14
+
